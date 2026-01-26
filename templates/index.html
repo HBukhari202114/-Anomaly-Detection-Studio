@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anomaly Detection Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Anomaly Detection Studio</h1>
+      <p>Compare supervised and unsupervised models across datasets</p>
+    </div>
+  </header>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2>Why Choose This Studio?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Flexible Model Comparison</h3>
+        <p>Seamlessly switch between supervised and unsupervised models to compare results and identify the most effective solution for your dataset.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Automatic Preprocessing</h3>
+        <p>The system automatically handles missing values, categorical encoding, and feature scaling, saving you time and ensuring consistency.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Interactive Visual Results</h3>
+        <p>Visualize performance metrics and anomalies using dynamic charts that provide deeper insights and easy export functionality.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="card mb-4">
+      <h2 class="text-xl font-semibold mb-4">Analysis Configuration</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="fileUpload" class="block mb-2">Upload Datasets (.csv/.json)</label>
+          <input type="file" id="fileUpload" accept=".csv,.json" multiple class="w-full">
+        </div>
+        <div>
+          <label for="targetColumn" class="block mb-2">Target Column (Required for Supervised)</label>
+          <input type="text" id="targetColumn" class="w-full" placeholder="Enter target column name">
+        </div>
+		<div class="threshold-mode">
+		  <label><input type="radio" name="thresholdMode" value="contamination" checked> Fixed Contamination</label>
+		  <label><input type="radio" name="thresholdMode" value="auto"> Auto Threshold</label>
+		</div>
+      </div>
+
+      <div class="mt-4">
+        <span class="block mb-2">Select Models</span>
+        <div class="model-grid">
+          
+          <!-- Unsupervised Models -->
+          <div class="model-section">
+            <h3 class="model-section-title">Unsupervised Models</h3>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="isolation_forest">
+              <span>Isolation Forest</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="autoencoder">
+              <span>Autoencoder</span>
+            </label>
+          </div>
+
+          <!-- Supervised Models -->
+          <div class="model-section">
+            <h3 class="model-section-title">Supervised Models</h3>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="random_forest">
+              <span>Random Forest</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="lightgbm">
+              <span>LightGBM</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="deep_learning">
+              <span>Deep Neural Network</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="contaminationSection" class="form-group mt-4 hidden">
+        <label for="contamination" class="block mb-2">Contamination (Unsupervised Only):</label>
+        <div class="flex gap-2">
+          <input type="number" id="contamination" name="contamination" 
+                min="0" max="1" step="0.01" 
+                placeholder="Auto detection" class="flex-grow">
+          <button type="button" id="autoContam" class="btn btn-secondary">Use Auto</button>
+        </div>
+      </div>
+
+      <div id="uploadPreview" class="mt-2 text-green-400 hidden"></div>
+      <div class="flex gap-4 items-center mt-4">
+        <button id="analyzeBtn" class="btn btn-primary flex-grow">
+          <span class="btn-text">Analyze</span>
+          <div class="loading-spinner hidden"></div>
+        </button>
+        <button id="cancelBtn" class="btn btn-danger hidden">Cancel</button>
+      </div>
+      <div id="error" class="mt-4 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-lg hidden"></div>
+    </div>
+
+    <div id="results" class="hidden" aria-live="polite">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Analysis Results</h2>
+        <button id="exportBtn" class="btn btn-primary">Export Results</button>
+      </div>
+		<div id="downloadSection" class="hidden">
+		  <button id="downloadBtn">Download Preprocessed CSV</button>
+		</div>
+      <div id="comparisonChart" class="chart-container"></div>
+      <div id="detailedResults" class="grid gap-4 mt-6"></div>
+    </div>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
