@@ -394,4 +394,123 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('autoContam').addEventListener('click', () => {
         contaminationInput.value = '';
     });
+
+    // Typewriter effect for codenesthub footer text
+    function initCodenesthubTypewriter() {
+        const footerText = document.getElementById('codenesthub-text');
+        if (!footerText) return;
+
+        const targetText = 'codenesthub';
+        const linkUrl = 'https://codenesthub.vercel.app/';
+        let hasAnimated = false;
+
+        // Intersection Observer to detect when footer is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasAnimated) {
+                    hasAnimated = true;
+                    typewriterEffect(footerText, targetText, linkUrl);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.3 // Trigger when 30% of footer is visible
+        });
+
+        // Observe the footer element
+        const footer = document.querySelector('.business-footer');
+        if (footer) {
+            observer.observe(footer);
+        }
+    }
+
+    function typewriterEffect(element, text, linkUrl) {
+        let index = 0;
+        element.textContent = '';
+
+        const typeInterval = setInterval(() => {
+            if (index < text.length) {
+                element.textContent += text[index];
+                index++;
+            } else {
+                clearInterval(typeInterval);
+                // Convert to clickable link after animation completes
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = linkUrl;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = text;
+                    element.innerHTML = '';
+                    element.appendChild(link);
+                }, 300); // Small delay before converting to link
+            }
+        }, 100); // 100ms delay between each letter
+    }
+
+    // Animated statistics counter
+    function initStatsCounter() {
+        const statNumbers = document.querySelectorAll('.stat-number');
+        let hasAnimated = false;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasAnimated) {
+                    hasAnimated = true;
+                    statNumbers.forEach(stat => {
+                        const target = parseInt(stat.getAttribute('data-target'));
+                        animateCounter(stat, target);
+                    });
+                    observer.disconnect();
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        const footer = document.querySelector('.business-footer');
+        if (footer) {
+            observer.observe(footer);
+        }
+    }
+
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 50; // 50 steps for smooth animation
+        const duration = 2000; // 2 seconds
+        const stepTime = duration / 50;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, stepTime);
+    }
+
+    // Smooth scroll for anchor links
+    function initSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && href.length > 1) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    // Initialize all footer features
+    initCodenesthubTypewriter();
+    initStatsCounter();
+    initSmoothScroll();
 });
